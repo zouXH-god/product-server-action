@@ -5,7 +5,7 @@
 ## 使用方法
 
 ```yaml
-- uses: shiran/product-server-action@v1
+- uses: shiran/product-server-action@v1.1
   with:
     url: ${{ secrets.ARTIFACT_SERVER_URL }}
     token: ${{ secrets.ARTIFACT_SERVER_TOKEN }}

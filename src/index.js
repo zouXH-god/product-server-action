@@ -82,7 +82,7 @@ async function run() {
     core.info(`Packaging ${files.length} file(s) as ${filename}`)
     const sha256=await createDeterministicZip(files,workspace,zipPath)
     const serverURL=baseURL.replace(/\/+$/,'')
-    await upload(serverURL,token,zipPath,filename,{version,commit_sha:process.env.GITHUB_SHA||'',branch:process.env.GITHUB_REF_NAME||'',pipeline_id:process.env.GITHUB_RUN_ID||'',job_url:process.env.GITHUB_SERVER_URL&&process.env.GITHUB_REPOSITORY&&process.env.GITHUB_RUN_ID?`${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`:''})
+    await upload(serverURL,token,zipPath,filename,{version,ref_type:process.env.GITHUB_REF_TYPE==='tag'?'tag':'commit',commit_sha:process.env.GITHUB_SHA||'',branch:process.env.GITHUB_REF_NAME||'',pipeline_id:process.env.GITHUB_RUN_ID||'',job_url:process.env.GITHUB_SERVER_URL&&process.env.GITHUB_REPOSITORY&&process.env.GITHUB_RUN_ID?`${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`:''})
     const downloadURL=`${serverURL}/api/download?version=${encodeURIComponent(version)}&file=${encodeURIComponent(filename)}`
     core.setOutput('version',version);core.setOutput('file',filename);core.setOutput('sha256',sha256);core.setOutput('download-url',downloadURL)
     core.info(`Uploaded ${filename} (${sha256})`)
