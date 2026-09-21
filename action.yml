@@ -1,0 +1,31 @@
+name: Upload Product Server Artifact
+description: Deterministically package and upload CI artifacts to Product Server
+inputs:
+  url:
+    description: Product Server base URL
+    required: true
+  token:
+    description: Project token
+    required: true
+  path:
+    description: Newline-separated files, directories, or glob patterns
+    required: true
+  name:
+    description: ZIP artifact name
+    required: false
+    default: artifact.zip
+  version:
+    description: Optional version override; defaults to tag or commit SHA
+    required: false
+outputs:
+  version:
+    description: Uploaded version
+  file:
+    description: Uploaded ZIP filename
+  sha256:
+    description: ZIP SHA-256
+  download-url:
+    description: Download URL without the project token
+runs:
+  using: node20
+  main: dist/index.js
