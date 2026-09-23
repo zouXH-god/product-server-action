@@ -1,0 +1,51 @@
+name: Build and publish release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build bundled Action
+        run: npm run build
+
+      - name: Verify committed distribution
+        run: git diff --exit-code -- dist
+
+      - name: Package Action
+        run: |
+          set -eu
+          mkdir -p release
+          archive="product-server-action-${GITHUB_REF_NAME}.tar.gz"
+          tar -czf "release/$archive" action.yml dist README.md package.json package-lock.json
+          (cd release && sha256sum "$archive" > SHA256SUMS)
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            release/product-server-action-*.tar.gz
+            release/SHA256SUMS
