@@ -52,6 +52,6 @@ npm run build
 Gitea 工作流会在移除 `.gitea/workflows` 后，将分支和 `v*` Tag 同步到 GitHub。需要在 Action 的 Gitea 仓库配置：
 
 - 变量 `MIRROR_REPOSITORY=zouXH-god/product-server-action`
-- Secret `MIRROR_FINE_GRAINED_TOKEN`，内容为对镜像仓库具有 Contents 读写权限的 GitHub Fine-grained PAT
+- Secret `MIRROR_FINE_GRAINED_TOKEN`，内容为对镜像仓库同时具有 `Contents: Read and write` 与 `Workflows: Read and write` 权限的 GitHub Fine-grained PAT
 
 GitHub 收到 `v*` Tag 后，仅在 GitHub 运行发布任务：测试 Action、重新构建并校验 `dist/index.js`，然后创建 GitHub Release，上传 Action 压缩包和 `SHA256SUMS`。
