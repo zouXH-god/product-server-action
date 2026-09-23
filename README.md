@@ -17,6 +17,8 @@
 
 `version` 输入可选。未指定时，tag 工作流使用 tag 名称，其他工作流使用完整 commit SHA。
 
+Action 会自动读取分支：普通分支运行使用 `GITHUB_REF_NAME`，Pull Request 优先使用源分支 `GITHUB_HEAD_REF`。Tag 事件无法可靠确定其来源分支，因此分支标识留空，不会误用 Tag 名称。
+
 ## 输入
 
 | 输入 | 必填 | 默认值 | 说明 |
@@ -30,6 +32,7 @@
 ## 输出
 
 - `version`：实际上传的版本。
+- `branch`：自动识别的源分支；纯 Tag 事件为空。
 - `file`：ZIP 文件名。
 - `sha256`：ZIP SHA-256。
 - `download-url`：不包含 Token 的下载地址。

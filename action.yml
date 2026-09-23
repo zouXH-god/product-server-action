@@ -20,6 +20,8 @@ inputs:
 outputs:
   version:
     description: Uploaded version
+  branch:
+    description: Automatically detected source branch, empty for tag-only events
   file:
     description: Uploaded ZIP filename
   sha256:
