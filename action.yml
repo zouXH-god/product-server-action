@@ -1,5 +1,6 @@
 name: Upload Product Server Artifact
 description: Deterministically package and upload CI artifacts to Product Server
+author: shiran
 inputs:
   url:
     description: Product Server base URL
@@ -31,3 +32,6 @@ outputs:
 runs:
   using: node20
   main: dist/index.js
+branding:
+  icon: upload-cloud
+  color: blue

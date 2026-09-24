@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -42,10 +44,60 @@ jobs:
           tar -czf "release/$archive" action.yml dist README.md package.json package-lock.json
           (cd release && sha256sum "$archive" > SHA256SUMS)
 
+      - name: Generate release notes
+        shell: bash
+        run: |
+          set -euo pipefail
+          current_tag="${GITHUB_REF_NAME}"
+          previous_tag="$(git tag --merged HEAD --sort=-version:refname | grep -Fxv "$current_tag" | head -n 1 || true)"
+
+          {
+            echo "# Product Server Artifact Uploader ${current_tag}"
+            echo
+            echo "Deterministically package and upload CI artifacts to a self-hosted Product Server."
+            echo
+            echo "## What's updated / 本版本更新"
+            echo
+            if [ -n "$previous_tag" ]; then
+              git log --no-merges --pretty=format:'- %s (`%h`)' "${previous_tag}..HEAD"
+              echo
+              echo
+              echo "**Full changelog:** [${previous_tag}...${current_tag}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/compare/${previous_tag}...${current_tag})"
+            else
+              git log --no-merges --pretty=format:'- %s (`%h`)' HEAD
+              echo
+            fi
+            echo
+            echo "## Usage / 使用方法"
+            echo
+            echo '```yaml'
+            echo '- name: Upload artifact'
+            echo "  uses: ${GITHUB_REPOSITORY}@${current_tag}"
+            echo '  with:'
+            echo '    url: $'"{{ vars.ARTIFACT_SERVER_URL }}"
+            echo '    token: $'"{{ secrets.ARTIFACT_SERVER_TOKEN }}"
+            echo '    path: dist/**'
+            echo '    name: web-build'
+            echo '```'
+            echo
+            echo "## Highlights"
+            echo
+            echo "- Deterministic ZIP archives for idempotent retries"
+            echo "- Automatic tag, commit SHA, and source branch detection"
+            echo "- Streaming multipart uploads without loading the full artifact into memory"
+            echo "- Version, branch, filename, SHA-256, and token-free download URL outputs"
+            echo "- Project tokens are masked and never included in Action outputs"
+            echo
+            echo "The attached archive contains the Action metadata, bundled runtime, README, and locked dependencies. Verify it with \`SHA256SUMS\`."
+          } > release/RELEASE_NOTES.md
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          name: Product Server Artifact Uploader ${{ github.ref_name }}
+          body_path: release/RELEASE_NOTES.md
           generate_release_notes: true
+          append_body: false
           files: |
             release/product-server-action-*.tar.gz
             release/SHA256SUMS

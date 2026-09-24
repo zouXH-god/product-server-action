@@ -5,7 +5,7 @@
 ## 使用方法
 
 ```yaml
-- uses: zouXH-god/product-server-action@v1.1
+- uses: zouXH-god/product-server-action@v1.3
   with:
     url: ${{ secrets.ARTIFACT_SERVER_URL }}
     token: ${{ secrets.ARTIFACT_SERVER_TOKEN }}
