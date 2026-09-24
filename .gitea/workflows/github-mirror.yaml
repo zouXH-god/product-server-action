@@ -39,6 +39,7 @@ jobs:
           set -eu
           git rm -r --ignore-unmatch .gitea/workflows
           sed -E -i "s#^([[:space:]]*- uses: )[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(@[^[:space:]]+)#\1zouXH-god/product-server-action\2#" README.md
+          sed -i "s#https://gitea.s1f.ren/shiran/productServer#https://github.com/zouXH-god/productServer#g" README.md
           git add README.md
           git config user.name "product-server-action-mirror"
           git config user.email "product-server-action-mirror@users.noreply.github.com"

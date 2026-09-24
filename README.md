@@ -2,6 +2,8 @@
 
 将 GitHub Actions 工作流中的文件或目录打包为确定性 ZIP，并上传到 Product Server。
 
+配套服务端与部署文档请查看 [Product Server 主仓库](https://gitea.s1f.ren/shiran/productServer)。
+
 ## 使用方法
 
 ```yaml
